@@ -1,52 +1,39 @@
-import { useState, useContext, useEffect } from 'react';
-import { AppContext } from '../App';
+import { useState } from 'react';
 
 const TweetInput = ({ addTweet }) => {
-	// Retrieve saved tweets from localStorage if available
-	const [tweets, setTweets] = useState(() => {
-		const savedTweets = localStorage.getItem('tweets');
-		return savedTweets ? JSON.parse(savedTweets) : [];
-	});
-	const [tweet, setTweet] = useState('');
-	const { user } = useContext(AppContext);
+	const [content, setContent] = useState('');
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		const newTweet = { content: tweet, author: user.name, date: new Date() };
-		const updatedTweets = [...tweets, newTweet];
-		setTweets(updatedTweets); // Update state with new tweets
-		setTweet(''); // Clear the input field
-		addTweet(newTweet); // Optional: Use if you want to keep the `addTweet` functionality
-	};
+		if (!content.trim()) return;
 
-	// OPTIONAL FOR LATER:
-	// Save tweets to localStorage whenever they change
-	// useEffect(() => {
-	// 	localStorage.setItem('tweets', JSON.stringify(tweets));
-	// }, [tweets]);
+		// Create a hardcoded tweet structure
+		const newTweet = {
+			id: Date.now(), // Unique ID
+			content,
+			publishedAt: new Date().toISOString(), // Current date-time
+			name: 'Anne West', // Hardcoded user name
+			profilePicture: '/gen-avatar.png', // Hardcoded avatar image
+		};
+
+		// Pass the new tweet to the parent component
+		addTweet(newTweet);
+
+		// Clear the input field
+		setContent('');
+	};
 
 	return (
 		<div>
 			<form onSubmit={handleSubmit}>
 				<input
 					type='text'
-					value={tweet}
-					onChange={(e) => setTweet(e.target.value)}
+					value={content}
+					onChange={(e) => setContent(e.target.value)}
 					placeholder="What's happening?"
 				/>
 				<button type='submit'>Tweet</button>
 			</form>
-			{/* <div>
-				<h2>Your Tweets</h2>
-				<ul>
-					{tweets.map((t, index) => (
-						<li key={index}>
-							<strong>{t.author}</strong>: {t.content} (
-							{new Date(t.date).toLocaleString()})
-						</li>
-					))}
-				</ul>
-			</div> */}
 		</div>
 	);
 };

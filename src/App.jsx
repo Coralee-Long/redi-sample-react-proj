@@ -4,14 +4,16 @@ import TweetList from './components/TweetList';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import Profile from './components/Profile';
+
 import './App.css';
 
+// Context is not really being used yet, but will be necessary if you do the Profile component etc
 export const AppContext = createContext();
 
 const App = () => {
 	const [tweets, setTweets] = useState([]);
 	const [user, setUser] = useState({
-		name: 'User',
+		name: 'Joe Smith',
 		profilePicture: '/avatar.jpg',
 	});
 	const [theme, setTheme] = useState('light');
@@ -24,20 +26,14 @@ const App = () => {
 
 	const fetchTweets = async () => {
 		try {
-			const response = await fetch('https://jsonplaceholder.org/posts');
+			const response = await fetch(
+				'https://my.api.mockaroo.com/tweets?key=c8f44730'
+			); // find better mock data
 			const data = await response.json();
 
-			// Limit to the first 10 items
-			const limitedData = data.slice(0, 10);
+			console.log(data);
 
-			console.log(limitedData);
-
-			const formattedTweets = limitedData.map((post) => ({
-				id: post.userId,
-				content: post.thumbnail,
-				user: { name: 'API User', profilePicture: 'default.jpg' },
-			}));
-			setTweets(formattedTweets);
+			setTweets(data);
 		} catch (error) {
 			console.error('Error fetching tweets:', error);
 		}
