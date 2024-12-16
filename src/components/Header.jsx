@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 import { AppContext } from '../App';
+import '../styles/Header.css';
 
 const Header = () => {
 	const { theme, setTheme } = useContext(AppContext);

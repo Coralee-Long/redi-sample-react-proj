@@ -4,7 +4,7 @@ import TweetList from './components/TweetList';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
 import Profile from './components/Profile';
-
+import fallbackData from './data/fallback_data.json';
 import './App.css';
 
 // Context is not really being used yet, but will be necessary if you do the Profile component etc
@@ -28,14 +28,24 @@ const App = () => {
 		try {
 			const response = await fetch(
 				'https://my.api.mockaroo.com/tweets?key=c8f44730'
-			); // find better mock data
+			);
+
+			if (!response.ok) {
+				console.log('api error, using fallback data');
+				setTweets(fallbackData);
+				return;
+			}
+
 			const data = await response.json();
 
-			console.log(data);
-
-			setTweets(data);
+			if (data && Array.isArray(data)) {
+				setTweets(data);
+			} else {
+				setTweets(fallbackData);
+			}
 		} catch (error) {
-			console.error('Error fetching tweets:', error);
+			console.log('api error, using fallback data');
+			setTweets(fallbackData);
 		}
 	};
 
